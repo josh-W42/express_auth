@@ -3,6 +3,12 @@ const express = require('express');
 const layouts = require('express-ejs-layouts');
 const app = express();
 
+// NEW
+const session = require('express-session'); // Ok we use this to monitor when someone is "logged in" and when they "logout".
+const flash = require('connect-flash'); // This communicates to the user when there are errors or success
+
+const SECRET_SESSION = process.env.SECRET_SESSION;
+
 app.set('view engine', 'ejs');
 
 app.use(require('morgan')('dev'));
