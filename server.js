@@ -8,9 +8,18 @@ const session = require('express-session'); // Ok we use this to monitor when so
 const flash = require('connect-flash'); // This communicates to the user when there are errors or success
 const passport = require('./config/ppConfig');
 
-const SECRET_SESSION = process.env.SECRET_SESSION;
+// Other Middleware
+
+app.set('view engine', 'ejs');
+
+app.use(require('morgan')('dev'));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(__dirname + '/public'));
+app.use(layouts);
 
 // Seesion Middleware
+const SECRET_SESSION = process.env.SECRET_SESSION;
+const isLoggedIn = require('./middleware/isLoggedIn');
 
 // secret: what we actually will be giving to the user on our site as a session coookie
 // resave: Save the session even if it's modified, make this false.
@@ -22,14 +31,21 @@ const sessionObject = {
 }
 app.use(session(sessionObject));
 
-// Other Middleware
+// Passport Middleware
+app.use(passport.initialize()); // Starts the password
+app.use(passport.session()); // Adds a session
 
-app.set('view engine', 'ejs');
+// Flash Middleware
+app.use(flash());
+app.use((req, res, next) => {
+  console.log(res.locals);
+  res.locals.alerts = req.flash();
+  res.locals.currentUser = req.user;
+  next();
+});
 
-app.use(require('morgan')('dev'));
-app.use(express.urlencoded({ extended: false }));
-app.use(express.static(__dirname + '/public'));
-app.use(layouts);
+// BUT WAIT, THERE'S more MIDDLEWARE in the middleware folder
+
 
 app.get('/', (req, res) => {
   res.render('index');
@@ -40,7 +56,6 @@ app.get('/profile', (req, res) => {
 });
 
 app.use('/auth', require('./routes/auth'));
-
 
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
