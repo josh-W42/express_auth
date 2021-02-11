@@ -47,17 +47,21 @@ module.exports = (sequelize, DataTypes) => {
     // Very simlar to client side js events, but these are lifecycle events!
     // Lookup sequalize hooks and lifecycle event to find all other events and call order.
     let hash = bcrypt.hashSync(pendingUser.password, 12); // encryption up to 12 binary numbers
-  
-    // I had heard that bcrypt isn't actually what we should be using in production for node.js apps...
-    // OK wait after some research it appears that bcrypt has dependancies that make the password vulnarable?
 
-    // LOL ok even more research, bcrypt (node built in sycrpt) could not be the best solutions,
-    // reason being: 
-    //    -they might not be as safe as we think
-    //    -The computation time nessary to get a safe hash is not worth the security it provides.
-    
-    // simplecrypt is an alternative for very simple encryptions and decryptions.
-    // bcrypt.js is another alternative that has NO dependancies, it's comparable to C++ bcrypt binding.
+    /*
+      For some reference:
+      bcrypt:
+        A module that can implement a specific algorthim for encypting / decypting data (lookup cryptography).
+        It's been used for a long time and has an abundance of downloads.
+
+      Here's also some bcrypt alternatives: if interested.
+
+      simplecrypt: for very simple encryptions and decryptions. Probably not useful for production.
+      bcrypt.js: is another alternative that has NO dependancies.
+
+      lastly, if you want use node's built in crypto.scrypt you can as well.
+
+    */
     pendingUser.password = hash;
   });
   

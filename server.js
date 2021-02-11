@@ -6,8 +6,23 @@ const app = express();
 // NEW
 const session = require('express-session'); // Ok we use this to monitor when someone is "logged in" and when they "logout".
 const flash = require('connect-flash'); // This communicates to the user when there are errors or success
+const passport = require('./config/ppConfig');
 
 const SECRET_SESSION = process.env.SECRET_SESSION;
+
+// Seesion Middleware
+
+// secret: what we actually will be giving to the user on our site as a session coookie
+// resave: Save the session even if it's modified, make this false.
+// saveUninitialized: If we have a new session, we save it, therefore making it true
+const sessionObject = {
+  secret: SECRET_SESSION,
+  resave: false,
+  saveUninitialized: true
+}
+app.use(session(sessionObject));
+
+// Other Middleware
 
 app.set('view engine', 'ejs');
 
