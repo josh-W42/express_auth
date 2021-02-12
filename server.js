@@ -38,7 +38,7 @@ app.use(passport.session()); // Adds a session
 // Flash Middleware
 app.use(flash());
 app.use((req, res, next) => {
-  console.log(res.locals);
+  // console.log(res.locals);
   res.locals.alerts = req.flash();
   res.locals.currentUser = req.user;
   next();
@@ -46,13 +46,13 @@ app.use((req, res, next) => {
 
 // BUT WAIT, THERE'S more MIDDLEWARE in the middleware folder
 
-
 app.get('/', (req, res) => {
   res.render('index');
 });
 
-app.get('/profile', (req, res) => {
-  res.render('profile');
+app.get('/profile', isLoggedIn, (req, res) => {
+  const { id, name, email } = req.user.get();
+  res.render('profile', { id, name, email });
 });
 
 app.use('/auth', require('./routes/auth'));
